@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ThemeProvider } from "next-themes"
 import { JwtProvider } from "@/contexts/jwt-context"
-
+import { TooltipProvider } from "@/components/ui/tooltip"
 const queryClient = new QueryClient()
 
 export default function Providers({
@@ -16,7 +16,9 @@ export default function Providers({
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
       <JwtProvider jwt={jwt}>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>{children}</TooltipProvider>
+        </QueryClientProvider>
       </JwtProvider>
     </ThemeProvider>
   )
