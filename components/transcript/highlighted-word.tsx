@@ -21,7 +21,7 @@ export default function HighlightedWord({
       type="button"
       onClick={() => onWordClick?.(word.start_time)}
       className={cn(
-        "inline-block cursor-pointer px-0.5 text-md transition-colors duration-75 hover:bg-muted hover:text-muted-foreground",
+        "inline-block cursor-pointer px-0.5 text-md hover:bg-muted hover:text-muted-foreground",
         isActive && "scale-x-105 rounded-sm bg-primary text-primary-foreground",
         isNext && "bg-primary/10",
         isPrevious && "bg-primary/5"
