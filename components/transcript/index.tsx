@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import type { Transcript, Word } from "@/types/meeting-data"
-import HighlightedWord from "./highlighted-word"
-import { scroller } from "react-scroll"
 import { Button } from "@/components/ui/button"
+import type { Transcript, Word } from "@/types/meeting-data"
 import dayjs from "dayjs"
 import duration from "dayjs/plugin/duration"
+import { Loader2 } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { scroller } from "react-scroll"
+import HighlightedWord from "./highlighted-word"
 
 dayjs.extend(duration)
 
@@ -14,12 +15,14 @@ interface TranscriptProps {
   transcripts: Transcript[]
   currentTime: number
   onTimeChange: (time: number) => void
+  isLoading?: boolean
 }
 
 export default function TranscriptViewer({
   transcripts,
   currentTime,
-  onTimeChange
+  onTimeChange,
+  isLoading = false
 }: TranscriptProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeWordId, setActiveWordId] = useState<number | null>(null)
@@ -74,10 +77,18 @@ export default function TranscriptViewer({
       className="relative mx-4 h-full max-h-[85svh] overflow-y-auto md:mt-6"
     >
       <h3 className="my-2 font-bold md:mt-0 md:text-lg">Transcript</h3>
-      {!transcripts ||
-        (transcripts.length === 0 && (
-          <p className="text-muted-foreground text-sm">No transcript available.</p>
-        ))}
+
+      {isLoading && (
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading transcript...
+        </div>
+      )}
+
+      {!isLoading && (!transcripts || transcripts.length === 0) && (
+        <p className="text-muted-foreground text-sm">No transcript available.</p>
+      )}
+
       {!isAutoScrolling && (
         <div className="-mt-9 sticky top-5 right-0 left-0 z-10 flex w-full justify-center">
           <Button
@@ -90,7 +101,7 @@ export default function TranscriptViewer({
         </div>
       )}
 
-      {transcripts.map((transcript) => (
+      {!isLoading && transcripts.map((transcript) => (
         <div
           key={transcript.id}
           id={`transcript-${transcript.id}`}

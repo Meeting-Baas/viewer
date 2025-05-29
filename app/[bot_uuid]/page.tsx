@@ -1,12 +1,12 @@
-import isUUID from "validator/lib/isUUID"
+import { ProgressiveViewer } from "@/components/viewer/progressive-viewer"
 import { getMeetingData } from "@/lib/api/meeting-data"
-import { headers } from "next/headers"
-import { getAuthSession } from "@/lib/auth/session"
-import { cache } from "react"
 import { getAuthAppUrl } from "@/lib/auth/auth-app-url"
-import { redirect } from "next/navigation"
-import { Viewer } from "@/components/viewer"
+import { getAuthSession } from "@/lib/auth/session"
 import { AlertCircle } from "lucide-react"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+import { cache } from "react"
+import isUUID from "validator/lib/isUUID"
 
 const authAppUrl = getAuthAppUrl()
 const getCachedAuthSession = cache(getAuthSession)
@@ -42,7 +42,8 @@ export default async function ViewerPage({
     redirect(redirectionUrl)
   }
 
-  const meetingData = await getMeetingData(session.user.botsApiKey, bot_uuid)
+  // First, load meeting data WITHOUT transcripts for faster initial load
+  const meetingData = await getMeetingData(session.user.botsApiKey, bot_uuid, false)
 
   // Meeting data not found, either the bot is not found or the user doesn't have access to it
   if (!meetingData) {
@@ -54,5 +55,11 @@ export default async function ViewerPage({
     )
   }
 
-  return <Viewer meetingData={meetingData} />
+  return (
+    <ProgressiveViewer
+      initialMeetingData={meetingData}
+      apiKey={session.user.botsApiKey}
+      botId={bot_uuid}
+    />
+  )
 }

@@ -1,9 +1,9 @@
 "use client"
 
+import TranscriptViewer from "@/components/transcript"
+import type { VideoPlayerProps } from "@/components/video-player"
 import type { MeetingDataResponse } from "@/types/meeting-data"
 import dynamic from "next/dynamic"
-import type { VideoPlayerProps } from "@/components/video-player"
-import TranscriptViewer from "@/components/transcript"
 import { useState } from "react"
 import { VideoDetails } from "../video-player/video-details"
 
@@ -11,13 +11,14 @@ const VideoPlayer = dynamic(() => import("@/components/video-player"), { ssr: fa
 
 interface ViewerProps {
   meetingData: MeetingDataResponse
+  isLoadingTranscripts?: boolean
 }
 
-export function Viewer({ meetingData }: ViewerProps) {
+export function Viewer({ meetingData, isLoadingTranscripts = false }: ViewerProps) {
   const [currentTime, setCurrentTime] = useState(0)
   const [seekTime, setSeekTime] = useState<number | undefined>(undefined)
   const {
-    bot_data: { transcripts }
+    bot_data: { transcripts = [] }
   } = meetingData
 
   const handleProgress: VideoPlayerProps["onProgress"] = (state: {
@@ -45,6 +46,7 @@ export function Viewer({ meetingData }: ViewerProps) {
             transcripts={transcripts}
             currentTime={currentTime}
             onTimeChange={handleTimeChange}
+            isLoading={isLoadingTranscripts}
           />
         </div>
       </div>
