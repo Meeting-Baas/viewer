@@ -19,7 +19,7 @@ export type User = {
   companyName: string | null
   companySize: string | null
   usagePlanned: string | null
-  botsApiKey: string | null
+  botsApiKey: string
   id: number
 }
 

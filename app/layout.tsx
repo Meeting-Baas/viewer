@@ -8,7 +8,7 @@ import { redirect } from "next/navigation"
 import LayoutRoot from "@/app/layout-root"
 import Providers from "@/components/providers"
 import { getAuthAppUrl } from "@/lib/auth/auth-app-url"
-
+import { cache } from "react"
 const sofiaSans = Sofia_Sans({
   subsets: ["latin"],
   display: "swap",
@@ -26,6 +26,7 @@ export const viewport: Viewport = {
 }
 
 const authAppUrl = getAuthAppUrl()
+const getCachedAuthSession = cache(getAuthSession)
 
 export default async function RootLayout({
   children
@@ -34,7 +35,7 @@ export default async function RootLayout({
 }>) {
   const [requestHeaders, requestCookies] = await Promise.all([headers(), cookies()])
   // RSCs need to pass cookies to getAuthSession
-  const session = await getAuthSession(requestCookies.toString())
+  const session = await getCachedAuthSession(requestCookies.toString())
   const jwt = requestCookies.get("jwt")?.value || ""
 
   if (!session) {
